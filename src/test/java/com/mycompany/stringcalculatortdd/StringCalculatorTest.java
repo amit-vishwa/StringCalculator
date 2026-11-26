@@ -61,4 +61,22 @@ public class StringCalculatorTest {
     public void shouldRejectMalformedDelimiterDeclaration() {
         assertThrows(IllegalArgumentException.class, () -> StringCalculator.add("//\n1,2"));
     }
+    @Test
+    public void shouldContinuePastMultipleIgnoredValuesAndIncludeTheThreshold() {
+        assertEquals(1005, StringCalculator.add("2,1001,3,1002,1000"));
+    }
+
+    @Test
+    public void shouldApplyThresholdRulesWithALiteralPipeDelimiter() {
+        assertEquals(1005, StringCalculator.add("//|\n2|1001|3|1002|1000"));
+    }
+
+    @Test
+    public void shouldReportAllCustomDelimitedNegativesDespiteIgnoredValues() {
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> StringCalculator.add("//|\n-1|1001|2|-3|1000"));
+
+        assertEquals("Negatives not allowed: -1,-3", exception.getMessage());
+    }
 }
